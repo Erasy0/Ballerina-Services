@@ -80,5 +80,32 @@ service /api on new http:Listener(3000) {
 
         return programmeList;
     }
+resource function put update_programme() returns error? {
+
+
+string update_programme = "UPDATE Programmes SET programme_name = ?, NQF_level = ?, faculty = ?, department = ?, registration_date = ? WHERE programme_code = ?";
+    
+   
+    var params = [
+        programme.programme_name,
+        programme.NQF_level,
+        programme.faculty,
+        programme.department,
+        programme.registration_date,
+        programme.programme_code
+    ];
+
+    
+    sql:ExecutionResult result = check dbClient->execute(update_programme, params);
+
+   
+    if (result.affectedRowCount == 1) {
+        io:println("Programme updated successfully!");
+        return;
+    } else {
+        io:println("Error updating programme: ", result.sqlErrorCode, " - ", result.sqlErrorMessage);
+        return error("Error updating programme");
+    }
+}
 
 }
